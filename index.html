@@ -281,6 +281,13 @@
             onValue(ref(db, 'lealtad/usuarios'), (snapshot) => {
                 const users = [];
                 snapshot.forEach(c => { users.push({ name: c.key, ...c.val() }); });
+                if (users.length === 0) {
+                  document.getElementById('ranking-body').innerHTML = `
+                    <tr>
+                      <td colspan="3" style="text-align:center; opacity:0.8; font-weight:700;">No hay usuarios</td>
+                    </tr>`;
+                  return;
+                }
                 const top = users.sort((a,b) => (b[criterioActual]||0) - (a[criterioActual]||0)).slice(0, 10);
                 document.getElementById('ranking-body').innerHTML = top.map((u, i) => `
                     <tr>
