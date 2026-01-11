@@ -246,25 +246,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
-        // --- LÓGICA DE LOGIN KICK INTEGRADA ---
-        const CLIENT_ID = "01KDEK0SYBAFYPBHRCFWJ7GTXC";
-        const REDIRECT_URI = "https://fortinerocavss.github.io/matumorell/";
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        let currentUser = localStorage.getItem('kickUser') || "fortinerocavs";
-
-        if (code) {
-            const tempUser = prompt("Conexión exitosa. Por seguridad, confirma tu nombre de Kick:");
-            if (tempUser) {
-                currentUser = tempUser.toLowerCase().trim();
-                localStorage.setItem('kickUser', currentUser);
-                window.history.replaceState({}, document.title, window.location.pathname);
-                location.reload();
-            }
-        }
-
+        let currentUser = "fortinerocavs";
         let criterioActual = 'puntos';
 
         onValue(ref(db, `lealtad/usuarios/${currentUser}`), (snap) => {
@@ -276,16 +258,9 @@
 
         const btnPresente = document.getElementById('btn-presente');
         btnPresente.onclick = () => {
-            if (!localStorage.getItem('kickUser')) {
-                // Si no hay usuario, redirigir al login de Kick para evitar el 404
-                const authUrl = `https://id.kick.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=user:read`;
-                window.location.href = authUrl;
-            } else {
-                // Si ya está logueado, disparar confeti
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#53fc18', '#ccff00'] });
-                btnPresente.disabled = true;
-                btnPresente.innerText = "PRESENCIA REGISTRADA";
-            }
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#53fc18', '#ccff00'] });
+            btnPresente.disabled = true;
+            btnPresente.innerText = "PRESENCIA REGISTRADA";
         };
 
         // Lógica de Tops Múltiples
@@ -323,5 +298,46 @@
 
         window.comprar = function(item, costo) { alert("Has canjeado: " + item + " por " + costo + " puntos."); };
     </script>
+
+    <!-- ===========================
+         Integración Kick OAuth2 (PKCE) - Añadido SIN BORRAR nada del HTML original
+         Archivos nuevos necesarios: pkce.js y callback.html (abajo te los doy)
+         =========================== -->
+    <script src="pkce.js"></script>
+    <div style="max-width:1280px;margin:2rem auto;text-align:center;">
+      <button id="kick-login-btn" class="btn-presente" style="max-width:320px; cursor:pointer;">Iniciar sesión con Kick</button>
+      <p style="opacity:0.85; font-weight:700; margin-top:0.6rem;">(Inicia sesión con Kick para conectar tu cuenta)</p>
+    </div>
+    <script>
+      // CLIENT_ID ya insertado (no compartas el client_secret en GitHub Pages)
+      const KICK_CLIENT_ID = '01KDEK0SYBAFYPBHRCFWJ7GTXC';
+      const KICK_REDIRECT_URI = 'https://fortineroocavss.github.io/matumorell/callback.html';
+
+      document.getElementById('kick-login-btn').addEventListener('click', async () => {
+        try {
+          const verifier = pkce.generateVerifier();
+          const challenge = await pkce.generateChallenge(verifier);
+          sessionStorage.setItem('kick_pkce_verifier', verifier);
+          const state = Math.random().toString(36).substring(2);
+          sessionStorage.setItem('kick_oauth_state', state);
+
+          const params = new URLSearchParams({
+            client_id: KICK_CLIENT_ID,
+            response_type: 'code',
+            redirect_uri: KICK_REDIRECT_URI,
+            scope: 'user:read',
+            state,
+            code_challenge: challenge,
+            code_challenge_method: 'S256'
+          });
+          // redirige al consent de Kick
+          window.location = `https://id.kick.com/oauth/authorize?${params.toString()}`;
+        } catch (err) {
+          console.error('Error PKCE:', err);
+          alert('Error al iniciar el flujo de autenticación, mira la consola.');
+        }
+      });
+    </script>
+
 </body>
 </html>
