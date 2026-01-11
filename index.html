@@ -91,7 +91,6 @@
             color: var(--kick-green); font-size: 1.4rem; font-weight: 900; text-transform: uppercase;
             letter-spacing: 2px; cursor: pointer; transition: all 0.4s ease;
             box-shadow: 0 0 20px rgba(83, 252, 24, 0.2); overflow: hidden;
-            text-decoration: none; display: flex; align-items: center; justify-content: center;
         }
 
         /* Tienda */
@@ -237,7 +236,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, get, update, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB...", 
@@ -248,22 +247,21 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- LÓGICA DE LOGIN KICK (NUEVA) ---
+        // --- LÓGICA DE LOGIN KICK INTEGRADA ---
         const CLIENT_ID = "01KDEK0SYBAFYPBHRCFWJ7GTXC";
         const REDIRECT_URI = "https://fortinerocavss.github.io/matumorell/";
         
-        const authUrl = `https://id.kick.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=user:read`;
-
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         let currentUser = localStorage.getItem('kickUser') || "fortinerocavs";
 
         if (code) {
-            const user = prompt("¡Verificación exitosa! Confirma tu nombre de Kick:");
-            if(user) {
-                currentUser = user.toLowerCase().trim();
+            const tempUser = prompt("Conexión exitosa. Por seguridad, confirma tu nombre de Kick:");
+            if (tempUser) {
+                currentUser = tempUser.toLowerCase().trim();
                 localStorage.setItem('kickUser', currentUser);
                 window.history.replaceState({}, document.title, window.location.pathname);
+                location.reload();
             }
         }
 
@@ -277,18 +275,18 @@
         });
 
         const btnPresente = document.getElementById('btn-presente');
-        
-        // Si no hay usuario en localStorage, el botón redirige a Kick
-        if (!localStorage.getItem('kickUser')) {
-            btnPresente.innerText = "CONECTAR CON KICK";
-            btnPresente.onclick = () => { window.location.href = authUrl; };
-        } else {
-            btnPresente.onclick = () => {
+        btnPresente.onclick = () => {
+            if (!localStorage.getItem('kickUser')) {
+                // Si no hay usuario, redirigir al login de Kick para evitar el 404
+                const authUrl = `https://id.kick.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=user:read`;
+                window.location.href = authUrl;
+            } else {
+                // Si ya está logueado, disparar confeti
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#53fc18', '#ccff00'] });
                 btnPresente.disabled = true;
                 btnPresente.innerText = "PRESENCIA REGISTRADA";
-            };
-        }
+            }
+        };
 
         // Lógica de Tops Múltiples
         window.cambiarTop = function(criterio, btn) {
@@ -296,7 +294,7 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            const titulos = { 'puntos': 'Top Puntos', 'mensajes_anual': 'Top Messages', 'racha': 'Top Racha' };
+            const titulos = { 'puntos': 'Top Puntos', 'mensajes_anual': 'Top Mensajes', 'racha': 'Top Racha' };
             const columnas = { 'puntos': 'Puntos', 'mensajes_anual': 'Mensajes', 'racha': 'Racha' };
             
             document.getElementById('ranking-title').innerText = titulos[criterio];
@@ -323,24 +321,7 @@
 
         cargarRanking();
 
-        // Lógica de compra real con Firebase
-        window.comprar = async (item, costo) => {
-            const userRef = ref(db, `lealtad/usuarios/${currentUser}`);
-            const snap = await get(userRef);
-            const pts = (snap.val() && snap.val().puntos) || 0;
-            
-            if (pts >= costo) {
-                await update(userRef, { puntos: pts - costo });
-                await set(push(ref(db, 'lealtad/pedidos')), { 
-                    user: currentUser, 
-                    item: item, 
-                    fecha: new Date().toLocaleString() 
-                });
-                alert("¡Canje exitoso! Se ha enviado el pedido.");
-            } else {
-                alert("No tienes puntos suficientes.");
-            }
-        };
+        window.comprar = function(item, costo) { alert("Has canjeado: " + item + " por " + costo + " puntos."); };
     </script>
 </body>
 </html>
