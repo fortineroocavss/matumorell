@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>matumorell - Ranking y Racha 2026</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --kick-green: #53fc18;
+            --mate-yellow: #ccff00;
+            --bg-black: #0b0b0b;
+            --card-gray: rgba(22, 22, 22, 0.5); 
+            --border-gray: rgba(255, 255, 255, 0.25);
+            --discord-blue: #5865F2;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0; padding: 0;
+            -webkit-font-smoothing: antialiased;
+            background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://i.postimg.cc/CLDnjSS5/ee.png');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Capa de bloqueo para conectar cuenta */
+        #login-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            z-index: 10000; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(15px);
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--kick-green); z-index: 9999;
+            box-shadow: 0 0 15px var(--kick-green);
+        }
+
+        .hero-container {
+            max-width: 1280px; margin: 0 auto;
+            padding: 7rem 2rem 3rem 2rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .main-title {
+            font-size: 6.5rem; font-weight: 900; line-height: 0.8; margin: 0;
+            letter-spacing: -0.06em; text-transform: uppercase;
+        }
+
+        .hero-description {
+            color: #e5e7eb; font-size: 1.15rem; font-weight: 700;
+            line-height: 1.5; margin-top: 2rem; max-width: 500px;
+        }
+
+        .aero-box {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.1) 100%);
+            border: 1px solid var(--border-gray);
+            backdrop-filter: blur(15px) saturate(160%);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+
+        .aero-box::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 5%; right: 5%; height: 40%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+            border-radius: 50% 50% 100% 100% / 20% 20% 100% 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .hero-image-wrapper .aero-box { width: 440px; padding: 12px; border-radius: 25px; }
+        .hero-image-wrapper img { width: 100%; display: block; border-radius: 18px; position: relative; z-index: 1; }
+
+        .content-wrapper { max-width: 1280px; margin: 0 auto; padding: 0 2rem 5rem 2rem; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .stat-card { padding: 2rem; border-radius: 1.5rem; display: flex; flex-direction: column; }
+        .stat-card-active { background: var(--mate-yellow); color: #000; border: none; backdrop-filter: none; }
+        .stat-card-active::before { display: none; }
+        .stat-value { font-size: 2.8rem; font-weight: 900; position: relative; z-index: 1; letter-spacing: -0.03em; }
+
+        .btn-presente {
+            font-family: 'Montserrat', sans-serif;
+            position: relative; width: 100%; padding: 1.5rem; margin-bottom: 4rem;
+            background: linear-gradient(135deg, rgba(83, 252, 24, 0.2) 0%, rgba(83, 252, 24, 0.05) 100%);
+            backdrop-filter: blur(15px); border: 1px solid var(--kick-green); border-radius: 1.2rem;
+            color: var(--kick-green); font-size: 1.4rem; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 2px; cursor: pointer; transition: all 0.4s ease;
+            box-shadow: 0 0 20px rgba(83, 252, 24, 0.2); overflow: hidden;
+            display: flex; align-items: center; justify-content: center; text-decoration: none;
+        }
+
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+        .shop-item { border-radius: 2rem; padding: 1.5rem; text-align: center; transition: 0.4s; }
+        .shop-item:hover { transform: translateY(-10px); }
+        .image-container { width: 100%; height: 200px; overflow: hidden; border-radius: 1.5rem; background: #000; margin-bottom: 1.5rem; position: relative; z-index: 1; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s; }
+        .item-desc { font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px; min-height: 40px; position: relative; z-index: 1; }
+
+        .btn-buy { 
+            position: relative; z-index: 1; background: linear-gradient(135deg, rgba(83, 252, 24, 0.1) 0%, rgba(83, 252, 24, 0.02) 100%);
+            backdrop-filter: blur(10px); border: 1px solid var(--kick-green); color: var(--kick-green); 
+            padding: 0.9rem; border-radius: 0.8rem; font-weight: 900; width: 100%; cursor: pointer; 
+            transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-buy:hover { background: var(--kick-green); color: #000; }
+
+        .ranking-tabs { display: flex; gap: 10px; margin-bottom: 1.5rem; justify-content: center; }
+        .tab-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-gray); color: white; padding: 0.8rem 1.5rem; border-radius: 12px; cursor: pointer; font-weight: 800; text-transform: uppercase; font-family: 'Montserrat', sans-serif; transition: 0.3s; }
+        .tab-btn.active { background: var(--kick-green); color: black; border-color: var(--kick-green); }
+
+        .ranking-box { border-radius: 2rem; padding: 2.5rem; margin-bottom: 3rem; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; position: relative; z-index: 1; }
+        td { padding: 1.4rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 700; }
+        th { text-align: left; color: #ffffff; font-size: 0.75rem; text-transform: uppercase; opacity: 0.6; padding: 1rem; }
+
+        .discord-retro-wrapper { width: 100%; display: flex; justify-content: center; margin-top: 4rem; }
+        .discord-btn-aero { text-decoration: none; width: 100%; max-width: 600px; height: 200px; border-radius: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.4s ease; cursor: pointer; overflow: hidden; }
+        .discord-img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transition: transform 0.4s ease; }
+        .discord-btn-aero:hover { transform: scale(1.02); box-shadow: 0 0 40px rgba(88, 101, 242, 0.6); }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="aero-box" style="padding: 3rem; text-align: center; border-radius: 25px; width: 90%; max-width: 450px;">
+            <h2 style="font-weight: 900; margin-bottom: 10px; letter-spacing: -1px;">BIENVENIDO</h2>
+            <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 2rem;">Conecta tu cuenta para acceder al ranking y la tienda.</p>
+            <a id="btn-kick-connect" href="#" class="btn-presente" style="margin-bottom: 0;">CONECTAR CON KICK</a>
+        </div>
+    </div>
+
+    <div class="progress-bar"></div>
+
+    <section class="hero-container">
+        <div class="hero-content">
+            <p style="color:var(--kick-green); font-weight:800; text-transform:uppercase; letter-spacing: 2px;">MATUMORELL</p>
+            <h1 class="main-title">RANKING</h1>
+            <p class="hero-description">El ranking oficial de la comunidad de matumorell. Hace crecer tu racha y gana puntos para canjear recompensas en la tienda.</p>
+        </div>
+        <div class="hero-image-wrapper">
+            <div class="aero-box">
+                <img src="https://cdn.7tv.app/emote/01K9WRRG4NCFKBJX3N9ZXQJGTK/4x.avif" alt="Matu">
+            </div>
+        </div>
+    </section>
+
+    <main class="content-wrapper">
+        <div class="stats-grid">
+            <div class="stat-card aero-box"><span style="font-size:0.75rem; font-weight:800; opacity:0.7; position: relative; z-index:1;">PUNTOS</span><div class="stat-value" id="user-points">0</div></div>
+            <div class="stat-card aero-box"><span style="font-size:0.75rem; font-weight:800; opacity:0.7; position: relative; z-index:1;">MENSAJES</span><div class="stat-value" id="user-messages">0</div></div>
+            <div class="stat-card stat-card-active"><span style="font-size:0.75rem; font-weight:800; opacity:0.9;">RACHA</span><div class="stat-value" id="user-streak">0 🔥</div></div>
+        </div>
+
+        <button id="btn-presente" class="btn-presente">REGISTRAR PRESENCIA</button>
+
+        <h3 style="color:var(--kick-green); font-weight:900; text-transform:uppercase; margin-bottom: 2rem;">Tienda de Canjes</h3>
+        <div class="shop-grid">
+            <div class="shop-item aero-box">
+                <div class="image-container"><img src="https://cdn.7tv.app/emote/01G9WQ3CYR000FVH08TVKSRGVH/4x.avif" alt="VIP"></div>
+                <div style="font-weight:900; font-size:1.2rem; margin-bottom:5px; position:relative; z-index:1;">VIP</div>
+                <div class="item-desc">VIP para el canal</div>
+                <div style="color:var(--kick-green); font-weight:800; margin-bottom:15px; position:relative; z-index:1;">20.000 PTS</div>
+                <button class="btn-buy" onclick="comprar('VIP', 20000)">Canjear</button>
+            </div>
+            <div class="shop-item aero-box">
+                <div class="image-container"><img src="https://cdn3.emoji.gg/emojis/9626-7tv.png" alt="7tv"></div>
+                <div style="font-weight:900; font-size:1.2rem; margin-bottom:5px; position:relative; z-index:1;">7TV PRO</div>
+                <div class="item-desc">1 mes de 7tv PRO</div>
+                <div style="color:var(--kick-green); font-weight:800; margin-bottom:15px; position:relative; z-index:1;">30.000 PTS</div>
+                <button class="btn-buy" onclick="comprar('1 mes de 7tv PRO', 30000)">Canjear</button>
+            </div>
+        </div>
+
+        <div style="margin-top: 5rem;">
+            <div class="ranking-tabs">
+                <button class="tab-btn active" onclick="cambiarTop('puntos', this)">Top Puntos</button>
+                <button class="tab-btn" onclick="cambiarTop('mensajes_anual', this)">Top Mensajes</button>
+                <button class="tab-btn" onclick="cambiarTop('racha', this)">Top Racha</button>
+            </div>
+
+            <div class="ranking-box aero-box">
+                <h3 id="ranking-title" style="color:var(--kick-green); font-weight:900; text-transform:uppercase; margin-bottom:2rem; position:relative; z-index:1;">Top Chatters Anual</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th><th>Viewer</th><th id="ranking-col-name">Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="discord-retro-wrapper">
+            <a href="https://discord.gg/2maUQej2vu" class="discord-btn-aero aero-box" target="_blank">
+                <img src="https://i.postimg.cc/fR6hNn6R/Copilot-20260111-023722.png" class="discord-img-bg" alt="Discord HQ">
+            </a>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, get, update, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // Configuración de tu Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB...", 
+            databaseURL: "https://paginastream-daa5d-default-rtdb.firebaseio.com",
+            projectId: "paginastream-daa5d",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- DATOS DE TU APP POINTUNDER ---
+        const CLIENT_ID = "01KDEK0SYBAFYPBHRCFWJ7GTXC"; // Tu ID real
+        const REDIRECT_URI = window.location.origin + window.location.pathname; // URL actual automática
+        
+        // Generar enlace real de conexión
+        const authUrl = `https://id.kick.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=user:read`;
+        document.getElementById('btn-kick-connect').href = authUrl;
+
+        // --- LÓGICA DE INICIO DE SESIÓN ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        let currentUser = localStorage.getItem('kickUser');
+
+        if (code) {
+            // Si hay un código, Kick nos devolvió a la página correctamente.
+            const tempUser = prompt("¡Conexión iniciada! Ingresa tu nombre de Kick para vincular los puntos:");
+            if (tempUser) {
+                currentUser = tempUser.toLowerCase().trim();
+                localStorage.setItem('kickUser', currentUser);
+                // Limpiar la URL y recargar para quitar el código feo
+                window.history.replaceState({}, document.title, window.location.pathname);
+                location.reload();
+            }
+        }
+
+        if (currentUser) {
+            document.getElementById('login-overlay').style.display = 'none';
+            cargarDatosUsuario();
+        }
+
+        function cargarDatosUsuario() {
+            onValue(ref(db, `lealtad/usuarios/${currentUser}`), (snap) => {
+                const d = snap.val() || {};
+                document.getElementById('user-points').innerText = (d.puntos || 0).toLocaleString();
+                document.getElementById('user-messages').innerText = d.mensajes_anual || 0;
+                document.getElementById('user-streak').innerText = `${d.racha || 0} 🔥`;
+            });
+        }
+
+        // --- RANKING ---
+        let criterioActual = 'puntos';
+        window.cambiarTop = function(criterio, btn) {
+            criterioActual = criterio;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            cargarRanking();
+        }
+
+        function cargarRanking() {
+            onValue(ref(db, 'lealtad/usuarios'), (snapshot) => {
+                const users = [];
+                snapshot.forEach(c => { users.push({ name: c.key, ...c.val() }); });
+                const top = users.sort((a,b) => (b[criterioActual]||0) - (a[criterioActual]||0)).slice(0, 10);
+                document.getElementById('ranking-body').innerHTML = top.map((u, i) => `
+                    <tr><td>#${i+1}</td><td>${u.name}</td><td>${u[criterioActual] || 0}</td></tr>
+                `).join('');
+            });
+        }
+        cargarRanking();
+    </script>
+</body>
+</html>
