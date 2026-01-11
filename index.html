@@ -25,7 +25,6 @@
             font-family: 'Montserrat', sans-serif;
             margin: 0; padding: 0;
             -webkit-font-smoothing: antialiased;
-            
             background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://i.postimg.cc/CLDnjSS5/ee.png');
             background-attachment: fixed;
             background-size: cover;
@@ -59,45 +58,96 @@
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.1) 100%);
             border: 1px solid var(--border-gray);
             backdrop-filter: blur(15px) saturate(160%);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4),
-                        inset 0 0 0 1px rgba(255,255,255,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
             overflow: hidden;
         }
 
-        .hero-image-wrapper .aero-box {
-            width: 440px; padding: 12px; border-radius: 25px;
+        .aero-box::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 5%; right: 5%; height: 40%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+            border-radius: 50% 50% 100% 100% / 20% 20% 100% 100%;
+            pointer-events: none;
+            z-index: 2;
         }
 
-        .hero-image-wrapper img {
-            width: 100%; display: block; border-radius: 18px;
-            position: relative; z-index: 1;
-        }
+        .hero-image-wrapper .aero-box { width: 440px; padding: 12px; border-radius: 25px; }
+        .hero-image-wrapper img { width: 100%; display: block; border-radius: 18px; position: relative; z-index: 1; }
 
         .content-wrapper { max-width: 1280px; margin: 0 auto; padding: 0 2rem 5rem 2rem; }
         
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            padding: 2rem; border-radius: 1.5rem; display: flex; flex-direction: column;
-        }
-
-        .stat-card-active { background: var(--mate-yellow); color: #000; border: none; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .stat-card { padding: 2rem; border-radius: 1.5rem; display: flex; flex-direction: column; }
+        .stat-card-active { background: var(--mate-yellow); color: #000; border: none; backdrop-filter: none; }
+        .stat-card-active::before { display: none; }
         .stat-value { font-size: 2.8rem; font-weight: 900; position: relative; z-index: 1; letter-spacing: -0.03em; }
 
         .btn-presente {
-            font-family: 'Montserrat', sans-serif; position: relative; width: 100%; padding: 1.5rem;
+            font-family: 'Montserrat', sans-serif;
+            position: relative; width: 100%; padding: 1.5rem; margin-bottom: 4rem;
             background: linear-gradient(135deg, rgba(83, 252, 24, 0.2) 0%, rgba(83, 252, 24, 0.05) 100%);
             backdrop-filter: blur(15px); border: 1px solid var(--kick-green); border-radius: 1.2rem;
             color: var(--kick-green); font-size: 1.4rem; font-weight: 900; text-transform: uppercase;
-            letter-spacing: 2px; cursor: pointer; transition: all 0.4s ease; margin-bottom: 4rem;
+            letter-spacing: 2px; cursor: pointer; transition: all 0.4s ease;
+            box-shadow: 0 0 20px rgba(83, 252, 24, 0.2); overflow: hidden;
             text-decoration: none; display: flex; align-items: center; justify-content: center;
         }
 
-        .ranking-box { border-radius: 2rem; padding: 2.5rem; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        /* Tienda */
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+        .shop-item { border-radius: 2rem; padding: 1.5rem; text-align: center; transition: 0.4s; }
+        .shop-item:hover { transform: translateY(-10px); }
+        .image-container { width: 100%; height: 200px; overflow: hidden; border-radius: 1.5rem; background: #000; margin-bottom: 1.5rem; position: relative; z-index: 1; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s; }
+        .item-desc { font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px; min-height: 40px; position: relative; z-index: 1; }
+
+        .btn-buy { 
+            position: relative; z-index: 1; background: linear-gradient(135deg, rgba(83, 252, 24, 0.1) 0%, rgba(83, 252, 24, 0.02) 100%);
+            backdrop-filter: blur(10px); border: 1px solid var(--kick-green); color: var(--kick-green); 
+            padding: 0.9rem; border-radius: 0.8rem; font-weight: 900; width: 100%; cursor: pointer; 
+            transition: 0.3s; text-transform: uppercase;
+        }
+        .btn-buy:hover { background: var(--kick-green); color: #000; }
+
+        /* --- NUEVOS ESTILOS PESTAÑAS RANKING --- */
+        .ranking-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-gray);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif;
+            transition: 0.3s;
+        }
+        .tab-btn.active {
+            background: var(--kick-green);
+            color: black;
+            border-color: var(--kick-green);
+        }
+
+        .ranking-box { border-radius: 2rem; padding: 2.5rem; margin-bottom: 3rem; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; position: relative; z-index: 1; }
         td { padding: 1.4rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 700; }
+        th { text-align: left; color: #ffffff; font-size: 0.75rem; text-transform: uppercase; opacity: 0.6; padding: 1rem; }
+
+        .discord-retro-wrapper { width: 100%; display: flex; justify-content: center; margin-top: 4rem; }
+        .discord-btn-aero {
+            text-decoration: none; width: 100%; max-width: 600px; height: 200px; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center; transition: all 0.4s ease;
+            cursor: pointer; overflow: hidden; 
+        }
+        .discord-img-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transition: transform 0.4s ease; }
+        .discord-btn-aero:hover { transform: scale(1.02); box-shadow: 0 0 40px rgba(88, 101, 242, 0.6); }
     </style>
 </head>
 <body>
@@ -108,38 +158,86 @@
         <div class="hero-content">
             <p style="color:var(--kick-green); font-weight:800; text-transform:uppercase; letter-spacing: 2px;">MATUMORELL</p>
             <h1 class="main-title">RANKING</h1>
-            <p class="hero-description">El ranking oficial de la comunidad de matumorell.</p>
+            <p class="hero-description">El ranking oficial de la comunidad de matumorell. Hace crecer tu racha y gana puntos para canjear recompensas en la tienda.</p>
         </div>
         <div class="hero-image-wrapper">
-            <div class="aero-box"><img src="https://cdn.7tv.app/emote/01K9WRRG4NCFKBJX3N9ZXQJGTK/4x.avif"></div>
+            <div class="aero-box">
+                <img src="https://cdn.7tv.app/emote/01K9WRRG4NCFKBJX3N9ZXQJGTK/4x.avif" alt="Matu">
+            </div>
         </div>
     </section>
 
     <main class="content-wrapper">
         <div class="stats-grid">
-            <div class="stat-card aero-box"><span style="font-size:0.75rem; font-weight:800; opacity:0.6;">PUNTOS</span><div class="stat-value" id="user-points">0</div></div>
-            <div class="stat-card aero-box"><span style="font-size:0.75rem; font-weight:800; opacity:0.6;">MENSAJES</span><div class="stat-value" id="user-messages">0</div></div>
-            <div class="stat-card stat-card-active"><span style="font-size:0.75rem; font-weight:800; opacity:0.7;">RACHA</span><div class="stat-value" id="user-streak">0 🔥</div></div>
+            <div class="stat-card aero-box"><span style="font-size:0.75rem; font-weight:800; opacity:0.7; position: relative; z-index:1;">PUNTOS</span><div class="stat-value" id="user-points">0</div></div>
+            <div class="stat-card aero-box"><span style="font-size:0.75rem; font-weight:800; opacity:0.7; position: relative; z-index:1;">MENSAJES</span><div class="stat-value" id="user-messages">0</div></div>
+            <div class="stat-card stat-card-active"><span style="font-size:0.75rem; font-weight:800; opacity:0.9;">RACHA</span><div class="stat-value" id="user-streak">0 🔥</div></div>
         </div>
 
-        <a id="auth-link" href="#" class="btn-presente">CONECTAR CON KICK</a>
+        <button id="btn-presente" class="btn-presente">REGISTRAR PRESENCIA</button>
 
-        <div class="ranking-box aero-box">
-            <h3 id="ranking-title" style="color:var(--kick-green); font-weight:900; text-transform:uppercase; margin-bottom:2rem;">Top Puntos</h3>
-            <table>
-                <thead>
-                    <tr style="text-align:left; color:#4b5563; font-size:0.75rem; text-transform:uppercase;">
-                        <th>#</th><th>Viewer</th><th>Puntos</th>
-                    </tr>
-                </thead>
-                <tbody id="ranking-body"></tbody>
-            </table>
+        <h3 style="color:var(--kick-green); font-weight:900; text-transform:uppercase; margin-bottom: 2rem;">Tienda de Canjes</h3>
+        <div class="shop-grid">
+            <div class="shop-item aero-box">
+                <div class="image-container"><img src="https://cdn.7tv.app/emote/01G9WQ3CYR000FVH08TVKSRGVH/4x.avif" alt="VIP"></div>
+                <div style="font-weight:900; font-size:1.2rem; margin-bottom:5px; position:relative; z-index:1;">VIP</div>
+                <div class="item-desc">VIP para el canal</div>
+                <div style="color:var(--kick-green); font-weight:800; margin-bottom:15px; position:relative; z-index:1;">20.000 PTS</div>
+                <button class="btn-buy" onclick="comprar('VIP', 20000)">Canjear</button>
+            </div>
+            <div class="shop-item aero-box">
+                <div class="image-container"><img src="https://cdn3.emoji.gg/emojis/9626-7tv.png" alt="7tv"></div>
+                <div style="font-weight:900; font-size:1.2rem; margin-bottom:5px; position:relative; z-index:1;">7TV PRO</div>
+                <div class="item-desc">1 mes de 7tv PRO</div>
+                <div style="color:var(--kick-green); font-weight:800; margin-bottom:15px; position:relative; z-index:1;">30.000 PTS</div>
+                <button class="btn-buy" onclick="comprar('1 mes de 7tv PRO', 30000)">Canjear</button>
+            </div>
+            <div class="shop-item aero-box">
+                <div class="image-container"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2048px-Steam_icon_logo.svg.png" alt="Steam"></div>
+                <div style="font-weight:900; font-size:1.2rem; margin-bottom:5px; position:relative; z-index:1;">JUEGO DE STEAM</div>
+                <div class="item-desc">Ruleta por juego de 5 o 10 USD</div>
+                <div style="color:var(--kick-green); font-weight:800; margin-bottom:15px; position:relative; z-index:1;">30.000 PTS</div>
+                <button class="btn-buy" onclick="comprar('Juego de Steam', 30000)">Canjear</button>
+            </div>
+            <div class="shop-item aero-box">
+                <div class="image-container"><img src="https://cdn.7tv.app/emote/01GM22A1480000MTRBTT12C34Z/4x.avif" alt="Dinero"></div>
+                <div style="font-weight:900; font-size:1.2rem; margin-bottom:5px; position:relative; z-index:1;">DINERO</div>
+                <div class="item-desc">Ruleta de 10k a 15k</div>
+                <div style="color:var(--kick-green); font-weight:800; margin-bottom:15px; position:relative; z-index:1;">50.000 PTS</div>
+                <button class="btn-buy" onclick="comprar('Dinero (Ruleta)', 50000)">Canjear</button>
+            </div>
+        </div>
+
+        <div style="margin-top: 5rem;">
+            <div class="ranking-tabs">
+                <button class="tab-btn active" onclick="cambiarTop('puntos', this)">Top Puntos</button>
+                <button class="tab-btn" onclick="cambiarTop('mensajes_anual', this)">Top Mensajes</button>
+                <button class="tab-btn" onclick="cambiarTop('racha', this)">Top Racha</button>
+            </div>
+
+            <div class="ranking-box aero-box">
+                <h3 id="ranking-title" style="color:var(--kick-green); font-weight:900; text-transform:uppercase; margin-bottom:2rem; position:relative; z-index:1;">Top Chatters Anual</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th><th>Viewer</th><th id="ranking-col-name">Puntos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="discord-retro-wrapper">
+            <a href="https://discord.gg/2maUQej2vu" class="discord-btn-aero aero-box" target="_blank">
+                <img src="https://i.postimg.cc/fR6hNn6R/Copilot-20260111-023722.png" class="discord-img-bg" alt="Discord HQ">
+            </a>
         </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, get, update, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB...", 
@@ -150,20 +248,18 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- CONFIGURACIÓN APP KICK ---
+        // --- LÓGICA DE LOGIN KICK (NUEVA) ---
         const CLIENT_ID = "01KDEK0SYBAFYPBHRCFWJ7GTXC";
-        const REDIRECT_URI = "https://fortinerocavss.github.io/matumorell/"; 
+        const REDIRECT_URI = "https://fortinerocavss.github.io/matumorell/";
         
         const authUrl = `https://id.kick.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=user:read`;
-        document.getElementById('auth-link').href = authUrl;
 
-        // --- MANEJO DE SESIÓN ---
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
-        let currentUser = localStorage.getItem('kickUser');
+        let currentUser = localStorage.getItem('kickUser') || "fortinerocavs";
 
         if (code) {
-            const user = prompt("¡Verificado! Escribe tu nombre de Kick:");
+            const user = prompt("¡Verificación exitosa! Confirma tu nombre de Kick:");
             if(user) {
                 currentUser = user.toLowerCase().trim();
                 localStorage.setItem('kickUser', currentUser);
@@ -171,28 +267,80 @@
             }
         }
 
-        if (currentUser) {
-            document.getElementById('auth-link').innerText = "CUENTA: " + currentUser.toUpperCase();
-            onValue(ref(db, `lealtad/usuarios/${currentUser}`), (snap) => {
-                const d = snap.val() || {};
-                document.getElementById('user-points').innerText = (d.puntos || 0).toLocaleString();
-                document.getElementById('user-messages').innerText = d.mensajes_anual || 0;
-                document.getElementById('user-streak').innerText = `${d.racha || 0} 🔥`;
-            });
+        let criterioActual = 'puntos';
+
+        onValue(ref(db, `lealtad/usuarios/${currentUser}`), (snap) => {
+            const d = snap.val() || {};
+            document.getElementById('user-points').innerText = (d.puntos || 0).toLocaleString();
+            document.getElementById('user-messages').innerText = d.mensajes_anual || 0;
+            document.getElementById('user-streak').innerText = `${d.racha || 0} 🔥`;
+        });
+
+        const btnPresente = document.getElementById('btn-presente');
+        
+        // Si no hay usuario en localStorage, el botón redirige a Kick
+        if (!localStorage.getItem('kickUser')) {
+            btnPresente.innerText = "CONECTAR CON KICK";
+            btnPresente.onclick = () => { window.location.href = authUrl; };
+        } else {
+            btnPresente.onclick = () => {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#53fc18', '#ccff00'] });
+                btnPresente.disabled = true;
+                btnPresente.innerText = "PRESENCIA REGISTRADA";
+            };
         }
 
-        // --- CARGAR RANKING ---
+        // Lógica de Tops Múltiples
+        window.cambiarTop = function(criterio, btn) {
+            criterioActual = criterio;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const titulos = { 'puntos': 'Top Puntos', 'mensajes_anual': 'Top Messages', 'racha': 'Top Racha' };
+            const columnas = { 'puntos': 'Puntos', 'mensajes_anual': 'Mensajes', 'racha': 'Racha' };
+            
+            document.getElementById('ranking-title').innerText = titulos[criterio];
+            document.getElementById('ranking-col-name').innerText = columnas[criterio];
+            cargarRanking();
+        }
+
         function cargarRanking() {
             onValue(ref(db, 'lealtad/usuarios'), (snapshot) => {
                 const users = [];
                 snapshot.forEach(c => { users.push({ name: c.key, ...c.val() }); });
-                const top = users.sort((a,b) => (b.puntos||0) - (a.puntos||0)).slice(0, 10);
+                const top = users.sort((a,b) => (b[criterioActual]||0) - (a[criterioActual]||0)).slice(0, 10);
                 document.getElementById('ranking-body').innerHTML = top.map((u, i) => `
-                    <tr><td>#${i+1}</td><td>${u.name}</td><td>${(u.puntos||0).toLocaleString()}</td></tr>
+                    <tr>
+                        <td style="color:var(--kick-green); font-weight:900;">#${i+1}</td>
+                        <td>${u.name}</td>
+                        <td style="color:var(--kick-green);">
+                            ${criterioActual === 'racha' ? (u.racha||0) + ' 🔥' : (u[criterioActual]||0).toLocaleString()}
+                        </td>
+                    </tr>
                 `).join('');
-            });
+            }, { onlyOnce: true });
         }
+
         cargarRanking();
+
+        // Lógica de compra real con Firebase
+        window.comprar = async (item, costo) => {
+            const userRef = ref(db, `lealtad/usuarios/${currentUser}`);
+            const snap = await get(userRef);
+            const pts = (snap.val() && snap.val().puntos) || 0;
+            
+            if (pts >= costo) {
+                await update(userRef, { puntos: pts - costo });
+                await set(push(ref(db, 'lealtad/pedidos')), { 
+                    user: currentUser, 
+                    item: item, 
+                    fecha: new Date().toLocaleString() 
+                });
+                alert("¡Canje exitoso! Se ha enviado el pedido.");
+            } else {
+                alert("No tienes puntos suficientes.");
+            }
+        };
     </script>
 </body>
 </html>
