@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>matumorell - Kick callback</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { background:#0b0b0b; color:#fff; font-family: 'Montserrat', sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; padding:2rem; }
+    .card { max-width:800px; width:100%; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:2rem; border-radius:12px; }
+    pre { white-space:pre-wrap; word-break:break-word; background:rgba(0,0,0,0.4); padding:1rem; border-radius:8px; }
+    a { color:#53fc18; font-weight:800; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Procesando autenticación con Kick...</h2>
+    <div id="status">Por favor espera...</div>
+    <h3 style="margin-top:1rem;">Resultado:</h3>
+    <pre id="out">Esperando respuesta...</pre>
+    <p style="margin-top:1rem; opacity:0.9;">Si ves un error relacionado con CORS, es probable que Kick no permita el intercambio de token desde el navegador. En ese caso debes usar un backend (te puedo dar el código).</p>
+  </div>
+
+  <script src="pkce.js"></script>
+  <script>
+    (async () => {
+      const out = document.getElementById('out');
+      const status = document.getElementById('status');
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const state = params.get('state');
+
+      if (!code) {
+        status.innerText = 'No se recibió "code" en la URL.';
+        out.textContent = JSON.stringify({ error: 'missing_code', raw: window.location.search }, null, 2);
+        return;
+      }
+
+      const savedState = sessionStorage.getItem('kick_oauth_state');
+      if (state !== savedState) {
+        status.innerText = 'State inválido (posible CSRF).';
+        out.textContent = JSON.stringify({ error: 'invalid_state', expected: savedState, got: state }, null, 2);
+        return;
+      }
+
+      const verifier = sessionStorage.getItem('kick_pkce_verifier');
+      if (!verifier) {
+        status.innerText = 'Falta code_verifier (PKCE).';
+        out.textContent = JSON.stringify({ error: 'missing_verifier' }, null, 2);
+        return;
+      }
+
+      status.innerText = 'Intercambiando código por token...';
+
+      const body = new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: '01KDEK0SYBAFYPBHRCFWJ7GTXC', // tu client_id (no compartas client_secret)
+        code,
+        redirect_uri: 'https://fortineroocavss.github.io/matumorell/callback.html',
+        code_verifier: verifier
+      });
+
+      try {
+        const r = await fetch('https://id.kick.com/oauth/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString()
+        });
+
+        if (!r.ok) {
+          const text = await r.text();
+          status.innerText = `Intercambio fallido: ${r.status}`;
+          out.textContent = text || `HTTP ${r.status}`;
+          return;
+        }
+
+        const token = await r.json();
+        sessionStorage.setItem('kick_token', JSON.stringify(token));
+        status.innerText = 'Token recibido correctamente.';
+        out.textContent = JSON.stringify(token, null, 2);
+
+        // Puedes usar token.access_token para llamar la API de Kick (desde un servidor o si CORS lo permite).
+
+      } catch (err) {
+        status.innerText = 'Error en la petición (posible bloqueo CORS).';
+        out.textContent = String(err) + '\n\nSi es CORS, crea un endpoint en tu servidor que haga este POST (te puedo generar el código).';
+        console.error(err);
+      }
+    })();
+  </script>
+</body>
+</html>
