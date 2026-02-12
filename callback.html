@@ -1,5 +1,10 @@
-<script>
-  // Your JavaScript code
-  const apiUrl = 'https://matumorell.vercel.app/api/token';
-  // Other code that uses apiUrl
-</script>
+const VERCEL_API = 'https://matumorell.vercel.app/api/token';
+
+// Other existing code can go here, if needed
+
+// Example function
+async function fetchToken() {
+    const response = await fetch(VERCEL_API);
+    const data = await response.json();
+    return data;
+}
