@@ -75,8 +75,12 @@
                 }
 
                 const savedState = sessionStorage.getItem('kick_oauth_state');
-                if (state !== savedState) {
+                // Validar state solo si existe en sessionStorage (puede no existir si se limpió)
+                if (savedState && state !== savedState) {
                     throw new Error('State no coincide - posible ataque');
+                }
+                if (!state) {
+                    console.warn('State no recibido de Kick, continuando...');
                 }
 
                 status.textContent = 'Intercambiando código por token...';
