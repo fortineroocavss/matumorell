@@ -318,7 +318,7 @@
     <script>
       // CLIENT_ID ya insertado (no compartas el client_secret en GitHub Pages)
       const KICK_CLIENT_ID = '01KDEK0SYBAFYPBHRCFWJ7GTXC';
-      const KICK_REDIRECT_URI = 'https://fortineroocavss.github.io/matumorell/callback.html';
+      const KICK_REDIRECT_URI = 'https://matumorell.vercel.app/callback.html';
 
       document.getElementById('kick-login-btn').addEventListener('click', async () => {
         try {
@@ -327,7 +327,7 @@
           const state = Math.random().toString(36).substring(2);
 
           // Guardar verifier en la URL del callback
-          const callbackUrl = 'https://fortineroocavss.github.io/matumorell/callback.html?verifier=' + encodeURIComponent(verifier) + '&state=' + encodeURIComponent(state);
+          const callbackUrl = 'https://matumorell.vercel.app/callback.html?verifier=' + encodeURIComponent(verifier) + '&state=' + encodeURIComponent(state);
 
           const params = new URLSearchParams({
             client_id: KICK_CLIENT_ID,
