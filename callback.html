@@ -32,13 +32,13 @@
 
                 document.getElementById('status').textContent = 'Obteniendo token...';
 
-                const response = await fetch('https://fortineroocavss.github.io/api/token', {
+                const response = await fetch('https://matumorell.vercel.app/api/token', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         code,
                         code_verifier: verifier,
-                        redirect_uri: 'https://fortineroocavss.github.io/matumorell/callback.html?verifier=' + encodeURIComponent(verifier)
+                        redirect_uri: 'https://matumorell.vercel.app/callback.html?verifier=' + encodeURIComponent(verifier)
                     })
                 });
 
@@ -51,7 +51,7 @@
                 localStorage.setItem('kick_access_token', data.access_token);
 
                 document.getElementById('status').textContent = '✓ Conectado! Redirigiendo...';
-                setTimeout(() => { window.location.href = '/matumorell/'; }, 1500);
+                setTimeout(() => { window.location.href = '/'; }, 1500);
 
             } catch (err) {
                 document.getElementById('status').textContent = '❌ ' + err.message;
