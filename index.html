@@ -324,9 +324,9 @@
         try {
           const verifier = pkce.generateVerifier();
           const challenge = await pkce.generateChallenge(verifier);
-          sessionStorage.setItem('kick_pkce_verifier', verifier);
+          localStorage.setItem('kick_pkce_verifier', verifier);
           const state = Math.random().toString(36).substring(2);
-          sessionStorage.setItem('kick_oauth_state', state);
+          localStorage.setItem('kick_oauth_state', state);
 
           const params = new URLSearchParams({
             client_id: KICK_CLIENT_ID,
