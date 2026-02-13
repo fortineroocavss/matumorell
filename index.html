@@ -324,14 +324,15 @@
         try {
           const verifier = pkce.generateVerifier();
           const challenge = await pkce.generateChallenge(verifier);
-          localStorage.setItem('kick_pkce_verifier', verifier);
           const state = Math.random().toString(36).substring(2);
-          localStorage.setItem('kick_oauth_state', state);
+
+          // Guardar verifier en la URL del callback
+          const callbackUrl = 'https://fortineroocavss.github.io/matumorell/callback.html?verifier=' + encodeURIComponent(verifier) + '&state=' + encodeURIComponent(state);
 
           const params = new URLSearchParams({
             client_id: KICK_CLIENT_ID,
             response_type: 'code',
-            redirect_uri: KICK_REDIRECT_URI,
+            redirect_uri: callbackUrl,
             scope: 'user:read',
             state,
             code_challenge: challenge,
